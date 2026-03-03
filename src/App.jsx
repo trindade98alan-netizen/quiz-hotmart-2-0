@@ -17,120 +17,119 @@ function utmifyTrack(event, data = {}) {
 }
 
 /* =========================
-   1) QUIZ (6 preguntas) — ESPAÑOL LATAM
+   1) QUIZ (6 perguntas) — PT-BR
 ========================= */
 
 const questions = [
   {
     question:
-      "¿Sabes exactamente cuánto dinero entró y cuánto salió de tu cuenta el mes pasado?",
+      "Você sabe exatamente quanto dinheiro entrou e quanto saiu da sua conta no último mês?",
     description:
-      "Aquí no hay correcto o incorrecto. Elige la opción que más se parezca a tu realidad hoy. Eso ayudará a armar tu diagnóstico financiero al final.",
+      "Aqui não existe certo ou errado. Escolha a opção que mais parece com a sua realidade hoje. Isso vai ajudar a montar o seu diagnóstico financeiro no final.",
     options: [
-      { text: "Tengo una idea, pero nada muy organizado", score: 2, emoji: "🙋‍♂️" },
-      { text: "Sí, lo tengo todo anotado y muy claro", score: 3, emoji: "😎" },
-      { text: "Sinceramente no… solo gasto y luego veo el estado de cuenta", score: 1, emoji: "😅" },
+      { text: "Tenho uma noção, mas nada muito organizado", score: 2, emoji: "🙋‍♂️" },
+      { text: "Sim, está tudo anotado e bem claro para mim", score: 3, emoji: "😎" },
+      { text: "Sinceramente não… só vou gastando e depois vejo no extrato", score: 1, emoji: "😅" },
     ],
   },
   {
     question:
-      'Cuando termina el mes, ¿sientes que el dinero simplemente “desapareció”?',
-    description: "Selecciona una opción:",
+      'Quando o mês acaba, você tem a sensação de que o dinheiro simplesmente “sumiu”?',
+    description: "Selecione uma opção:",
     options: [
-      { text: "Sí, al final del mes casi nunca sé a dónde se fue el dinero.", score: 1, emoji: "😔" },
-      { text: "No, lo reviso todo y sé exactamente en qué se fue cada gasto.", score: 3, emoji: "😏" },
-      { text: "A veces lo siento, pero en general me las arreglo y cierro el mes.", score: 2, emoji: "🤷‍♂️" },
+      { text: "Sim, no fim do mês quase nunca sei para onde o dinheiro foi.", score: 1, emoji: "😔" },
+      { text: "Não, eu acompanho tudo e sei exatamente para onde foi cada gasto.", score: 3, emoji: "😏" },
+      { text: "Às vezes sinto isso, mas no geral consigo me virar e fechar o mês.", score: 2, emoji: "🤷‍♂️" },
     ],
   },
   {
     question:
-      "Si sigues haciendo exactamente lo mismo con tu dinero, ¿cómo crees que estará tu vida financiera en 6 meses?",
-    description: "Elige la opción que mejor te describa:",
+      "Se você continuar fazendo exatamente o que faz hoje com seu dinheiro, como imagina que estará sua vida financeira daqui a 6 meses?",
+    description: "Escolha a opção que melhor descreve você:",
     options: [
-      { text: "Probablemente con más deudas y frustración", score: 1, emoji: "😣" },
-      { text: "Igual que hoy, sin mucha evolución", score: 2, emoji: "😐" },
-      { text: "Con control y logrando ahorrar cada mes", score: 3, emoji: "🤑" },
+      { text: "Provavelmente mais endividado(a) e frustrado(a)", score: 1, emoji: "😣" },
+      { text: "Do mesmo jeito de hoje, sem muita evolução", score: 2, emoji: "😐" },
+      { text: "Com controle e conseguindo guardar dinheiro todo mês", score: 3, emoji: "🤑" },
     ],
   },
   {
-    question: "¿Qué es lo que más te impide tener un buen control financiero hoy?",
-    description: "Responde con sinceridad.",
+    question: "O que mais te impede de ter um bom controle financeiro hoje?",
+    description: "Responda com sinceridade.",
     options: [
-      { text: "Falta de organización: empiezo y no logro mantener el control", score: 1, emoji: "🙋‍♂️" },
-      { text: "No tengo una herramienta simple para controlar mi dinero", score: 2, emoji: "🤷‍♂️" },
-      { text: "Se me olvida registrar los gastos del día a día", score: 1, emoji: "❌" },
-      { text: "Me parece complicado usar hojas de cálculo y números", score: 1, emoji: "😅" },
-    ],
-  },
-  {
-    question:
-      "Si tuvieras una hoja automática que muestre, en pocos clics, a dónde se va cada centavo… ¿la usarías?",
-    description: "¿Qué opinas?",
-    options: [
-      { text: "Sí, totalmente. Es justo lo que necesito ahora", score: 3, emoji: "✅" },
-      { text: "Tal vez, si es muy simple y no me toma mucho tiempo", score: 2, emoji: "🙋‍♂️" },
-      { text: "No lo sé, nunca lo intenté… pero me da curiosidad", score: 2, emoji: "🤔" },
+      { text: "Falta de organização: começo e não consigo manter o controle", score: 1, emoji: "🙋‍♂️" },
+      { text: "Não tenho uma ferramenta simples para controlar meu dinheiro", score: 2, emoji: "🤷‍♂️" },
+      { text: "Eu esqueço de anotar os gastos do dia a dia", score: 1, emoji: "❌" },
+      { text: "Acho complicado mexer com planilhas e números", score: 1, emoji: "😅" },
     ],
   },
   {
     question:
-      "¿Te gustaría tener acceso a esta hoja hoy mismo para empezar a organizar tu dinero?",
+      "Se você tivesse uma planilha automática que mostrasse, em poucos cliques, para onde cada centavo do seu dinheiro está indo… você usaria?",
+    description: "Qual é a sua opinião?",
+    options: [
+      { text: "Com certeza. É exatamente o que eu preciso agora", score: 3, emoji: "✅" },
+      { text: "Talvez, se for bem simples e não tomar muito tempo", score: 2, emoji: "🙋‍♂️" },
+      { text: "Não sei… nunca tentei, mas tenho curiosidade", score: 2, emoji: "🤔" },
+    ],
+  },
+  {
+    question:
+      "Você gostaria de ter acesso a essa planilha ainda hoje para começar a organizar seu dinheiro?",
     description: "",
     options: [
-      { text: "Sí, quiero acceso inmediato para organizar mi dinero", score: 3, emoji: "✅" },
-      { text: "Sí, pero necesito algo muy simple y fácil de usar", score: 2, emoji: "🙋‍♂️" },
-      { text: "Por ahora no", score: 1, emoji: "😔" },
+      { text: "Sim, quero acesso imediato para organizar meu dinheiro", score: 3, emoji: "✅" },
+      { text: "Sim, mas preciso de algo bem simples e fácil de usar", score: 2, emoji: "🙋‍♂️" },
+      { text: "Por enquanto não", score: 1, emoji: "😔" },
     ],
   },
 ];
 
 /* =========================
    2) OFERTA ÚNICA (Hotmart)
-   ✅ Precios en formato: $19,90
 ========================= */
 
 const offer = {
   id: "card1",
-  title: "Hoja de Cálculo Vida Sin Deudas",
-  subtitle: "Acceso de por vida",
-  oldPrice: "$97,00",
-  newPrice: "$19,90",
-  url: "https://pay.hotmart.com/X104304638O?checkoutMode=10",
-  image: "/card1-gringa.png",
+  title: "Planilha Vida Sem Dívidas",
+  subtitle: "Acesso vitalício",
+  oldPrice: "R$97,00",
+  newPrice: "R$27,00",
+  url: "https://pay.hotmart.com/Y104727959E?checkoutMode=10",
+  image: "/card1.png",
   bullets: [
-    "Acceso de por vida",
-    "Actualizaciones constantes",
-    "Video guía para aprender a usarla",
-    "Sin mensualidad",
-    "Personalízala según tus necesidades",
-    "Hecha para principiantes y avanzados",
+    "Acesso vitalício",
+    "Atualizações constantes",
+    "Vídeo guia para aprender a usar",
+    "Sem mensalidade",
+    "Personalize de acordo com as suas necessidades",
+    "Feita para iniciantes e experientes",
   ],
 };
 
 /* =========================
-   3) TESTIMONIOS
+   3) DEPOIMENTOS
 ========================= */
 
 const testimonials = [
   {
     text:
-      "Siempre perdía el control de los gastos pequeños. Con la hoja, empecé a monitorear todo y ya estoy logrando guardar un ahorro mensual.",
-    name: "María Silva",
-    role: "Trabajadora independiente",
+      "Eu sempre perdia o controle das pequenas despesas. Com a planilha, passei a acompanhar tudo e já estou conseguindo guardar uma reserva mensal!",
+    name: "Maria Silva",
+    role: "Trabalhadora autônoma",
     avatar: "/maria.jpg",
   },
   {
     text:
-      "Súper simple y práctica. Logré organizar mis cuentas y armar un presupuesto mensual que realmente funciona. ¡Vale cada centavo!",
+      "Simples de usar e muito prática. Consegui organizar minhas contas e criar um orçamento mensal que realmente funciona. Vale cada centavo!",
     name: "Breno Silva",
-    role: "Asistente de TI",
+    role: "Auxiliar de TI",
     avatar: "/breno.jpg",
   },
   {
     text:
-      "Pensé que organizar las finanzas era difícil hasta usar esta hoja. Es intuitiva y los reportes me ayudan a tomar mejores decisiones.",
+      "Achei que organização financeira fosse complicado até usar essa planilha. Intuitiva e com relatórios que me ajudam a decidir melhor!",
     name: "Paulo B.",
-    role: "Empleado",
+    role: "Funcionário",
     avatar: "/paulo.jpg",
   },
 ];
@@ -189,31 +188,27 @@ export default function App() {
     }
   }
 
-  /* ===== PÁGINA 1: ENTRADA con MOCKUP ===== */
+  /* ===== PÁGINA 1: ENTRADA com MOCKUP ===== */
   if (stage === "hook") {
     return (
       <div style={styles.page}>
         <div style={styles.card}>
           <div style={styles.mockWrap}>
-            <img
-              src="/mockup-gringa.png"
-              alt="Mockup de la hoja"
-              style={styles.mockImg}
-            />
+            <img src="/mockup.png" alt="Mockup da planilha" style={styles.mockImg} />
           </div>
 
-          <h1 style={styles.title}>Responde 6 preguntas rápidas 💰</h1>
+          <h1 style={styles.title}>Responda 6 perguntas rápidas 💰</h1>
           <p style={styles.subtitle}>
-            En menos de 1 minuto, descubre si tu dinero realmente está bajo control
-            o se te está escapando sin que te des cuenta.
+            Em menos de 1 minuto, descubra se o seu dinheiro está realmente sob controle
+            ou escapando da sua mão sem você perceber.
           </p>
 
           <div style={styles.badgeRow}>
-            <span style={styles.badge}>🕐 Toma solo unos segundos</span>
+            <span style={styles.badge}>🕐 Leva apenas alguns segundos</span>
           </div>
 
           <button style={styles.primaryBtn} onClick={start}>
-            Iniciar diagnóstico financiero
+            Iniciar diagnóstico financeiro
           </button>
         </div>
       </div>
@@ -229,7 +224,7 @@ export default function App() {
         <div style={styles.card}>
           <div style={styles.topRow}>
             <span style={styles.stepPill}>
-              Pregunta {current + 1} de {questions.length}
+              Pergunta {current + 1} de {questions.length}
             </span>
             <span style={styles.stepPct}>{progressPct}%</span>
           </div>
@@ -255,9 +250,7 @@ export default function App() {
           </div>
 
           <div style={styles.helpRow}>
-            <span style={styles.helpText}>
-              No hay correcto o incorrecto — sé sincero.
-            </span>
+            <span style={styles.helpText}>Não existe certo ou errado — seja sincero.</span>
           </div>
         </div>
       </div>
@@ -276,10 +269,10 @@ function OffersPage({ totalScore, maxScore }) {
 
   const perfil =
     totalScore <= 8
-      ? "Tu dinero probablemente se está escapando sin que te des cuenta 💸"
+      ? "Seu dinheiro provavelmente está escapando sem você perceber 💸"
       : totalScore <= 13
-      ? "Te las arreglas, pero estás perdiendo dinero por el descontrol invisible 👀"
-      : "Ya tienes una buena base — ahora es mantener consistencia y optimizar 📌";
+      ? "Você até se vira, mas está perdendo dinheiro no descontrole invisível 👀"
+      : "Você já tem uma boa base — agora é manter consistência e otimizar 📌";
 
   return (
     <div style={styles.page}>
@@ -287,29 +280,25 @@ function OffersPage({ totalScore, maxScore }) {
         {/* Contador */}
         <div style={offersStyles.timerWrap}>
           <div style={offersStyles.timerText}>
-            ASEGURA TU DESCUENTO AHORA <span style={offersStyles.timer}>{time}</span>
+            GARANTA AGORA COM DESCONTO <span style={offersStyles.timer}>{time}</span>
           </div>
         </div>
 
         {/* Título + Diagnóstico */}
         <div style={{ textAlign: "center", marginTop: 8 }}>
-          <div style={offersStyles.headerTag}>TU MEJOR OPCIÓN</div>
-          <div style={offersStyles.headerTitle}>Tu diagnóstico está listo ✅</div>
+          <div style={offersStyles.headerTag}>SUA MELHOR OPÇÃO</div>
+          <div style={offersStyles.headerTitle}>Seu diagnóstico está pronto ✅</div>
           <div style={offersStyles.headerSub}>
             {perfil}
             <div style={{ marginTop: 6, color: "#6b7280", fontSize: 12 }}>
-              Puntuación: <strong>{totalScore}</strong> / {maxScore}
+              Pontuação: <strong>{totalScore}</strong> / {maxScore}
             </div>
           </div>
         </div>
 
-        {/* Imagen hoja */}
+        {/* Imagem planilha */}
         <div style={offersStyles.planilhaOnlyWrap}>
-          <img
-            src="/planilha-gringa.png"
-            alt="Hoja de cálculo"
-            style={offersStyles.planilhaOnlyImg}
-          />
+          <img src="/planilha.png" alt="Planilha" style={offersStyles.planilhaOnlyImg} />
         </div>
 
         {/* Card único */}
@@ -317,41 +306,36 @@ function OffersPage({ totalScore, maxScore }) {
           <OfferCard offer={offer} />
         </div>
 
-        {/* ===== GARANTÍA ===== */}
+        {/* ===== GARANTIA ===== */}
         <div style={guaranteeStyles.wrap}>
-          <div style={guaranteeStyles.badge}>GARANTÍA TOTAL</div>
+          <div style={guaranteeStyles.badge}>GARANTIA TOTAL</div>
 
           <div style={guaranteeStyles.title}>
-            Pruébalo por <span style={guaranteeStyles.titleStrong}>7 días</span> — Sin riesgo ✅
+            Experimente por <span style={guaranteeStyles.titleStrong}>7 dias</span> — Sem risco ✅
           </div>
 
           <div style={guaranteeStyles.text}>
-            Confío tanto en que esta hoja te dará claridad y control de tu dinero,
-            que te doy <strong>7 días para probarla sin miedo</strong>.
+            Eu confio tanto que essa planilha vai te dar clareza e controle do seu dinheiro,
+            que vou te dar <strong>7 dias pra testar sem medo</strong>.
             <br />
             <br />
-            Si dentro de <strong>7 días</strong> sientes que no valió la pena, solo lo pides
-            y recibes <strong>el 100% de tu dinero</strong> de vuelta.
+            Se dentro de <strong>7 dias</strong> você achar que não valeu a pena, é só pedir e
+            você recebe <strong>100% do seu dinheiro de volta</strong>.
             <br />
             <br />
-            Sin vueltas. Sin burocracia. El riesgo es mío. <strong>Tú solo pruebas.</strong>
+            Sem enrolação. Sem burocracia. O risco é meu. <strong>Você só testa.</strong>
           </div>
 
           <div style={guaranteeStyles.footerLine}>
-            O organizas tu vida financiera… <strong>o te devuelvo tu dinero.</strong>
+            Ou você organiza sua vida financeira… <strong>ou eu devolvo o seu dinheiro.</strong>
           </div>
 
-          {/* ✅ imagem correta */}
-          <img
-            src="/garantia-7dias.png"
-            alt="Garantía 7 días"
-            style={guaranteeStyles.image}
-          />
+          <img src="/garantia-7dias.png" alt="Garantia 7 dias" style={guaranteeStyles.image} />
         </div>
 
-        {/* Testimonios */}
+        {/* Depoimentos */}
         <div style={{ marginTop: 18 }}>
-          <h3 style={offersStyles.h3}>TESTIMONIOS DE QUIENES YA COMPRARON</h3>
+          <h3 style={offersStyles.h3}>RELATOS DE QUEM ADQUIRIU</h3>
           {testimonials.map((t, i) => (
             <Testimonial key={i} {...t} />
           ))}
@@ -372,8 +356,8 @@ function OfferCard({ offer }) {
       </div>
 
       <div style={offersStyles.priceBox}>
-        <div style={offersStyles.oldPrice}>Antes: {offer.oldPrice}</div>
-        <div style={offersStyles.newPrice}>Hoy: {offer.newPrice}</div>
+        <div style={offersStyles.oldPrice}>De: {offer.oldPrice}</div>
+        <div style={offersStyles.newPrice}>Por: {offer.newPrice}</div>
       </div>
 
       {offer.bullets?.length > 0 && (
@@ -403,7 +387,7 @@ function OfferCard({ offer }) {
           window.location.href = finalUrl;
         }}
       >
-        Quiero este
+        Quero esse
       </button>
     </div>
   );
