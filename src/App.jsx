@@ -92,8 +92,8 @@ const offer = {
   id: "card1",
   title: "Planilha Vida Sem Dívidas",
   subtitle: "Acesso vitalício",
-  oldPrice: "R$97,00",
-  newPrice: "R$27,00",
+  oldPrice: "R$197,00", // <-- ancoragem alterada
+  newPrice: "R$47,00",  // <-- preço alterado
   url: "https://pay.hotmart.com/Y104727959E?checkoutMode=10",
   image: "/card1.png",
   bullets: [
@@ -389,6 +389,20 @@ function OfferCard({ offer }) {
       >
         Quero esse
       </button>
+
+      {/* ===== TEXTO PERSUASIVO ABAIXO DO BOTÃO (BÔNUS) ===== */}
+      <div style={offersStyles.bonusWrap}>
+        <div style={offersStyles.bonusBadge}>🎁 BÔNUS EXCLUSIVOS DO QUIZ</div>
+        <div style={offersStyles.bonusText}>
+          <strong>ATENÇÃO:</strong> além da planilha, ao clicar em <strong>“Quero esse”</strong>{" "}
+          você vai desbloquear <strong>2 bônus especiais</strong> que{" "}
+          <strong>só são liberados pra quem respondeu todo o quiz</strong>.
+          <br />
+          <span style={offersStyles.bonusCuriosity}>
+            (Você vai ver quais são <strong>na próxima tela</strong> 👀)
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -597,6 +611,39 @@ const offersStyles = {
     fontWeight: 900,
     cursor: "pointer",
     marginTop: "auto",
+  },
+
+  /* ===== BÔNUS ABAIXO DO BOTÃO ===== */
+  bonusWrap: {
+    marginTop: 12,
+    borderRadius: 14,
+    border: "2px solid #16a34a",
+    background: "linear-gradient(180deg, #ecfdf5, #ffffff)",
+    padding: 12,
+    textAlign: "center",
+  },
+  bonusBadge: {
+    display: "inline-block",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "#16a34a",
+    color: "white",
+    fontSize: 12,
+    fontWeight: 900,
+    letterSpacing: 0.3,
+  },
+  bonusText: {
+    marginTop: 10,
+    fontSize: 13,
+    lineHeight: 1.5,
+    color: "#0f172a",
+  },
+  bonusCuriosity: {
+    display: "inline-block",
+    marginTop: 8,
+    fontSize: 13,
+    fontWeight: 900,
+    color: "#065f46",
   },
 
   h3: { fontSize: 13, letterSpacing: 0.6, margin: "0 0 10px 0", textAlign: "center" },
