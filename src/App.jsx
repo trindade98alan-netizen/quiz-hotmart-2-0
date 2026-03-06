@@ -245,8 +245,8 @@ export default function App() {
 
   if (stage === "hook") {
     return (
-      <div style={styles.page}>
-        <div style={styles.card}>
+      <div style={styles.page} className="quiz-root-page">
+        <div style={styles.card} className="quiz-main-card">
           <div style={styles.mockWrap}>
             <img src="/mockup.png" alt="Mockup da planilha" style={styles.mockImg} />
           </div>
@@ -273,8 +273,8 @@ export default function App() {
     const q = questions[current];
 
     return (
-      <div style={styles.page}>
-        <div style={styles.card}>
+      <div style={styles.page} className="quiz-root-page">
+        <div style={styles.card} className="quiz-main-card">
           <div style={styles.topRow}>
             <span style={styles.stepPill}>
               Pergunta {current + 1} de {questions.length}
@@ -347,8 +347,8 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
   useDesktopExitIntent(() => setShowExitModal(true), "main_exit_intent_desktop");
 
   return (
-    <div style={styles.page}>
-      <div style={{ ...styles.card, padding: 18 }}>
+    <div style={styles.page} className="quiz-root-page">
+      <div style={{ ...styles.card, padding: 18 }} className="quiz-main-card">
         <div style={offersStyles.timerWrap}>
           <div style={offersStyles.timerText}>
             GARANTA AGORA COM DESCONTO <span style={offersStyles.timer}>{time}</span>
@@ -406,6 +406,7 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
 
           <button
             style={offersStyles.bottomCtaBtn}
+            className="offers-bottom-cta-mobile"
             onClick={() => redirectToCheckout(mainOffer, "bottom_cta_click")}
           >
             Quero minha Planilha
@@ -434,15 +435,15 @@ function ExitOfferPage({ offer, onBackToMain }) {
   const time = useCountdown(7 * 60);
 
   return (
-    <div style={styles.page}>
-      <div style={{ ...styles.card, padding: 18 }}>
-        <div style={exitStyles.topAlert}>
+    <div style={styles.page} className="quiz-root-page">
+      <div style={{ ...styles.card, padding: 18 }} className="quiz-main-card">
+        <div style={exitStyles.topAlert} className="exit-top-alert-mobile">
           ⚠️ ESPERE! Antes de sair, eu liberei uma condição especial só nesta tela
         </div>
 
         <div style={exitStyles.heroWrap}>
           <div style={exitStyles.heroBadge}>DESCONTO DE SAÍDA</div>
-          <div style={exitStyles.heroTitle}>
+          <div style={exitStyles.heroTitle} className="exit-hero-title-mobile">
             Não feche essa página sem pegar sua <span style={exitStyles.heroStrong}>oferta final</span>
           </div>
           <div style={exitStyles.heroText}>
@@ -451,29 +452,39 @@ function ExitOfferPage({ offer, onBackToMain }) {
           </div>
         </div>
 
-        <div style={exitStyles.timerBox}>
-          Essa condição expira em <span style={exitStyles.timerValue}>{time}</span>
+        <div style={{ textAlign: "center" }}>
+          <div style={exitStyles.timerBox} className="exit-timer-box-mobile">
+            Essa condição expira em <span style={exitStyles.timerValue}>{time}</span>
+          </div>
         </div>
 
-        <div style={exitStyles.priceCard}>
+        <div style={exitStyles.priceCard} className="exit-price-card-mobile">
           <div style={exitStyles.priceImageCol}>
             <img src={offer.image} alt={offer.title} style={exitStyles.priceImage} />
           </div>
 
           <div style={exitStyles.priceInfo}>
-            <div style={exitStyles.offerMiniTag}>OFERTA DE SAÍDA EXCLUSIVA</div>
-            <div style={exitStyles.offerTitle}>{offer.title}</div>
+            <div style={exitStyles.offerMiniTag} className="exit-mini-tag-mobile">
+              OFERTA DE SAÍDA EXCLUSIVA
+            </div>
+            <div style={exitStyles.offerTitle} className="exit-title-mobile">
+              {offer.title}
+            </div>
             <div style={exitStyles.offerSubtitle}>{offer.subtitle}</div>
 
             <div style={exitStyles.priceLineOld}>De {offer.oldPrice}</div>
-            <div style={exitStyles.priceLineNew}>Por apenas {offer.newPrice}</div>
+            <div style={exitStyles.priceLineNew} className="exit-price-new-mobile">
+              Por apenas {offer.newPrice}
+            </div>
             <div style={exitStyles.priceObs}>
               Mesmo acesso, mesmos bônus e uma última chance antes de você sair.
             </div>
 
             <div style={exitStyles.couponBox}>
               <div style={exitStyles.couponLabel}>USE ESTE CUPOM NO CHECKOUT:</div>
-              <div style={exitStyles.couponCode}>{offer.coupon}</div>
+              <div style={exitStyles.couponCode} className="exit-coupon-code-mobile">
+                {offer.coupon}
+              </div>
               <div style={exitStyles.couponHint}>
                 Ao clicar no botão abaixo, aplique a palavra <strong>{offer.coupon}</strong> no campo de cupom
                 para liberar o desconto da oferta de saída.
@@ -482,6 +493,7 @@ function ExitOfferPage({ offer, onBackToMain }) {
 
             <button
               style={exitStyles.ctaBtn}
+              className="exit-cta-mobile"
               onClick={() => redirectToCheckout(offer, "exit_offer_click")}
             >
               Quero aproveitar com o cupom OPORTUNIDADE
@@ -498,7 +510,9 @@ function ExitOfferPage({ offer, onBackToMain }) {
 
         <div style={exitStyles.bonusSection}>
           <div style={exitStyles.sectionBadge}>🎁 TODOS OS BÔNUS CONTINUAM INCLUSOS</div>
-          <div style={exitStyles.sectionTitle}>Você não leva só a planilha</div>
+          <div style={exitStyles.sectionTitle} className="exit-section-title-mobile">
+            Você não leva só a planilha
+          </div>
           <div style={exitStyles.sectionText}>
             Além da planilha, você também recebe os bônus abaixo para acelerar sua organização,
             sair das dívidas e enxergar novas oportunidades financeiras.
@@ -519,11 +533,14 @@ function ExitOfferPage({ offer, onBackToMain }) {
 
         <div style={{ marginTop: 22 }}>
           <div style={exitStyles.sectionBadge}>🔥 VEJA O QUE ESTÃO FALANDO</div>
-          <div style={exitStyles.sectionTitle}>Provas reais de quem adquiriu</div>
+          <div style={exitStyles.sectionTitle} className="exit-section-title-mobile">
+            Provas reais de quem adquiriu
+          </div>
           <TestimonialsCarousel images={testimonialImages} />
 
           <button
             style={offersStyles.bottomCtaBtn}
+            className="offers-bottom-cta-mobile"
             onClick={() => redirectToCheckout(offer, "exit_bottom_cta_click")}
           >
             Quero minha Planilha com o cupom OPORTUNIDADE
@@ -751,6 +768,8 @@ const styles = {
     justifyContent: "center",
     fontFamily: "Arial",
     padding: 16,
+    boxSizing: "border-box",
+    overflowX: "hidden",
   },
   card: {
     background: "#ffffff",
@@ -761,6 +780,7 @@ const styles = {
     boxShadow: "0 20px 40px rgba(0,0,0,0.22)",
     padding: "26px 22px",
     overflow: "hidden",
+    boxSizing: "border-box",
   },
   mockWrap: {
     width: "100%",
@@ -774,10 +794,11 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    boxSizing: "border-box",
   },
   mockImg: { width: "100%", height: "100%", objectFit: "contain", display: "block" },
-  title: { fontSize: 22, marginBottom: 10, color: "#0f172a" },
-  subtitle: { fontSize: 14, color: "#475569", marginBottom: 14, lineHeight: 1.45 },
+  title: { fontSize: 22, marginBottom: 10, color: "#0f172a", wordBreak: "normal", overflowWrap: "break-word" },
+  subtitle: { fontSize: 14, color: "#475569", marginBottom: 14, lineHeight: 1.45, wordBreak: "normal", overflowWrap: "break-word" },
   badgeRow: { display: "flex", justifyContent: "center", marginBottom: 14 },
   badge: {
     fontSize: 12,
@@ -798,7 +819,7 @@ const styles = {
     fontWeight: 800,
     cursor: "pointer",
   },
-  topRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+  topRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, gap: 10 },
   stepPill: {
     fontSize: 12,
     fontWeight: 800,
@@ -807,11 +828,11 @@ const styles = {
     padding: "7px 10px",
     borderRadius: 999,
   },
-  stepPct: { fontSize: 12, fontWeight: 800, color: "#16a34a" },
+  stepPct: { fontSize: 12, fontWeight: 800, color: "#16a34a", flexShrink: 0 },
   progressBar: { width: "100%", height: 8, background: "#e2e8f0", borderRadius: 10, overflow: "hidden", marginBottom: 18 },
   progressFill: { height: "100%", background: "#16a34a", transition: "width 0.25s ease" },
-  qTitle: { fontSize: 17, marginBottom: 10, color: "#0f172a", lineHeight: 1.35 },
-  qDesc: { fontSize: 13, color: "#64748b", marginBottom: 12, lineHeight: 1.45 },
+  qTitle: { fontSize: 17, marginBottom: 10, color: "#0f172a", lineHeight: 1.35, wordBreak: "normal", overflowWrap: "break-word" },
+  qDesc: { fontSize: 13, color: "#64748b", marginBottom: 12, lineHeight: 1.45, wordBreak: "normal", overflowWrap: "break-word" },
   optionBtn: {
     width: "100%",
     padding: 14,
@@ -824,9 +845,10 @@ const styles = {
     alignItems: "flex-start",
     gap: 10,
     textAlign: "left",
+    boxSizing: "border-box",
   },
-  optEmoji: { width: 22, display: "inline-flex", justifyContent: "center" },
-  optText: { fontSize: 14, color: "#0f172a", lineHeight: 1.35 },
+  optEmoji: { width: 22, display: "inline-flex", justifyContent: "center", flexShrink: 0 },
+  optText: { fontSize: 14, color: "#0f172a", lineHeight: 1.35, wordBreak: "normal", overflowWrap: "break-word" },
   helpRow: { marginTop: 14, textAlign: "center" },
   helpText: { fontSize: 12, color: "#94a3b8" },
 };
@@ -842,6 +864,10 @@ const offersStyles = {
     fontWeight: 900,
     letterSpacing: 0.3,
     textAlign: "center",
+    maxWidth: "100%",
+    boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   timer: {
     marginLeft: 8,
@@ -850,6 +876,7 @@ const offersStyles = {
     background: "#16a34a",
     color: "white",
     fontWeight: 900,
+    display: "inline-block",
   },
   headerTag: {
     display: "inline-block",
@@ -860,9 +887,11 @@ const offersStyles = {
     fontSize: 12,
     fontWeight: 900,
     marginBottom: 10,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
-  headerTitle: { fontSize: 18, fontWeight: 900, color: "#0f172a" },
-  headerSub: { marginTop: 8, fontSize: 13, color: "#334155", lineHeight: 1.45 },
+  headerTitle: { fontSize: 18, fontWeight: 900, color: "#0f172a", wordBreak: "normal", overflowWrap: "break-word" },
+  headerSub: { marginTop: 8, fontSize: 13, color: "#334155", lineHeight: 1.45, wordBreak: "normal", overflowWrap: "break-word" },
   planilhaOnlyWrap: {
     width: "100%",
     maxWidth: 720,
@@ -891,9 +920,10 @@ const offersStyles = {
     display: "flex",
     flexDirection: "column",
     overflow: "hidden",
+    boxSizing: "border-box",
   },
-  cardTitle: { fontSize: 16, fontWeight: 900, color: "#0f172a" },
-  cardSubtitle: { fontSize: 12, color: "#64748b", marginTop: 4 },
+  cardTitle: { fontSize: 16, fontWeight: 900, color: "#0f172a", wordBreak: "normal", overflowWrap: "break-word" },
+  cardSubtitle: { fontSize: 12, color: "#64748b", marginTop: 4, wordBreak: "normal", overflowWrap: "break-word" },
   cardImageWrap: {
     width: "100%",
     marginTop: 10,
@@ -912,9 +942,10 @@ const offersStyles = {
     padding: 12,
     background: "#f8fafc",
     border: "1px solid #e5e7eb",
+    boxSizing: "border-box",
   },
-  oldPrice: { fontSize: 12, color: "#6b7280", textDecoration: "line-through" },
-  newPrice: { marginTop: 6, fontSize: 20, fontWeight: 900, color: "#0f172a" },
+  oldPrice: { fontSize: 12, color: "#6b7280", textDecoration: "line-through", wordBreak: "normal", overflowWrap: "break-word" },
+  newPrice: { marginTop: 6, fontSize: 20, fontWeight: 900, color: "#0f172a", wordBreak: "normal", overflowWrap: "break-word" },
   bullets: { listStyle: "none", padding: 0, margin: "12px 0 0 0" },
   bulletItem: {
     fontSize: 12,
@@ -923,6 +954,7 @@ const offersStyles = {
     lineHeight: 1.35,
     whiteSpace: "normal",
     wordBreak: "break-word",
+    overflowWrap: "break-word",
   },
   buyBtn: {
     width: "100%",
@@ -943,6 +975,7 @@ const offersStyles = {
     background: "linear-gradient(180deg, #ecfdf5, #ffffff)",
     padding: 14,
     textAlign: "center",
+    boxSizing: "border-box",
   },
   bonusHeaderBadge: {
     display: "inline-block",
@@ -953,6 +986,8 @@ const offersStyles = {
     fontSize: 12,
     fontWeight: 900,
     letterSpacing: 0.3,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   bonusHeaderTitle: {
     marginTop: 10,
@@ -960,6 +995,8 @@ const offersStyles = {
     fontWeight: 900,
     color: "#0f172a",
     lineHeight: 1.25,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   bonusHeaderText: {
     marginTop: 8,
@@ -969,6 +1006,8 @@ const offersStyles = {
     maxWidth: 620,
     marginLeft: "auto",
     marginRight: "auto",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   bonusGrid: {
     marginTop: 16,
@@ -985,6 +1024,8 @@ const offersStyles = {
     textAlign: "left",
     boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
     overflow: "hidden",
+    boxSizing: "border-box",
+    minWidth: 0,
   },
   bonusImageWrapVertical: {
     width: "100%",
@@ -1011,6 +1052,8 @@ const offersStyles = {
     color: "#0f172a",
     lineHeight: 1.3,
     textAlign: "center",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   bonusCardDesc: {
     marginTop: 6,
@@ -1018,6 +1061,8 @@ const offersStyles = {
     lineHeight: 1.5,
     color: "#334155",
     textAlign: "left",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   h3: {
     fontSize: 13,
@@ -1039,6 +1084,7 @@ const offersStyles = {
     margin: "18px auto 0 auto",
     display: "block",
     boxShadow: "0 10px 24px rgba(22, 163, 74, 0.28)",
+    boxSizing: "border-box",
   },
 };
 
@@ -1108,6 +1154,7 @@ const guaranteeStyles = {
     padding: 18,
     textAlign: "center",
     boxShadow: "0 10px 24px rgba(0,0,0,0.06)",
+    boxSizing: "border-box",
   },
   badge: {
     display: "inline-block",
@@ -1119,6 +1166,8 @@ const guaranteeStyles = {
     fontWeight: 900,
     letterSpacing: 0.3,
     marginBottom: 10,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   title: {
     fontSize: 20,
@@ -1126,6 +1175,8 @@ const guaranteeStyles = {
     color: "#0f172a",
     lineHeight: 1.25,
     marginBottom: 10,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   titleStrong: { color: "#7c3aed" },
   text: {
@@ -1134,11 +1185,15 @@ const guaranteeStyles = {
     fontSize: 14,
     color: "#334155",
     lineHeight: 1.6,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   footerLine: {
     marginTop: 12,
     fontSize: 14,
     color: "#0f172a",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   image: {
     width: "100%",
@@ -1160,6 +1215,9 @@ const exitStyles = {
     fontSize: 14,
     marginBottom: 16,
     boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    textAlign: "center",
   },
   heroWrap: {
     textAlign: "center",
@@ -1173,12 +1231,16 @@ const exitStyles = {
     fontSize: 12,
     fontWeight: 900,
     marginBottom: 10,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   heroTitle: {
     fontSize: 26,
     fontWeight: 900,
     color: "#0f172a",
     lineHeight: 1.2,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   heroStrong: {
     color: "#dc2626",
@@ -1189,6 +1251,8 @@ const exitStyles = {
     fontSize: 15,
     color: "#334155",
     lineHeight: 1.6,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   timerBox: {
     marginTop: 16,
@@ -1201,6 +1265,9 @@ const exitStyles = {
     fontSize: 13,
     maxWidth: "100%",
     boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    textAlign: "center",
   },
   timerValue: {
     marginLeft: 8,
@@ -1221,6 +1288,8 @@ const exitStyles = {
     background: "linear-gradient(180deg, #fff1f2, #ffffff)",
     overflow: "hidden",
     boxSizing: "border-box",
+    width: "100%",
+    minWidth: 0,
   },
   priceImageCol: {
     width: "100%",
@@ -1235,6 +1304,7 @@ const exitStyles = {
   priceInfo: {
     textAlign: "left",
     minWidth: 0,
+    width: "100%",
   },
   offerMiniTag: {
     display: "inline-block",
@@ -1246,6 +1316,8 @@ const exitStyles = {
     fontWeight: 900,
     maxWidth: "100%",
     boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   offerTitle: {
     marginTop: 10,
@@ -1253,13 +1325,17 @@ const exitStyles = {
     fontWeight: 900,
     color: "#0f172a",
     lineHeight: 1.15,
-    wordBreak: "break-word",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    whiteSpace: "normal",
   },
   offerSubtitle: {
     marginTop: 6,
     fontSize: 13,
     color: "#64748b",
     lineHeight: 1.45,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   priceLineOld: {
     marginTop: 16,
@@ -1267,7 +1343,8 @@ const exitStyles = {
     color: "#6b7280",
     textDecoration: "line-through",
     fontWeight: 700,
-    wordBreak: "break-word",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   priceLineNew: {
     marginTop: 6,
@@ -1275,13 +1352,17 @@ const exitStyles = {
     color: "#dc2626",
     fontWeight: 900,
     lineHeight: 1.1,
-    wordBreak: "break-word",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    whiteSpace: "normal",
   },
   priceObs: {
     marginTop: 8,
     fontSize: 14,
     color: "#334155",
     lineHeight: 1.5,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   couponBox: {
     marginTop: 14,
@@ -1292,6 +1373,8 @@ const exitStyles = {
     textAlign: "center",
     boxSizing: "border-box",
     overflow: "hidden",
+    width: "100%",
+    minWidth: 0,
   },
   couponLabel: {
     fontSize: 12,
@@ -1299,6 +1382,8 @@ const exitStyles = {
     color: "#7f1d1d",
     letterSpacing: 0.5,
     lineHeight: 1.4,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   couponCode: {
     marginTop: 8,
@@ -1306,13 +1391,17 @@ const exitStyles = {
     fontWeight: 900,
     color: "#dc2626",
     letterSpacing: 1.5,
-    wordBreak: "break-word",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    whiteSpace: "normal",
   },
   couponHint: {
     marginTop: 8,
     fontSize: 13,
     color: "#334155",
     lineHeight: 1.5,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   ctaBtn: {
     width: "100%",
@@ -1326,6 +1415,10 @@ const exitStyles = {
     fontWeight: 900,
     cursor: "pointer",
     boxShadow: "0 10px 24px rgba(22, 163, 74, 0.28)",
+    boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    whiteSpace: "normal",
   },
   backBtn: {
     width: "100%",
@@ -1338,6 +1431,10 @@ const exitStyles = {
     fontSize: 14,
     fontWeight: 800,
     cursor: "pointer",
+    boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
+    whiteSpace: "normal",
   },
   bonusSection: {
     marginTop: 22,
@@ -1346,6 +1443,7 @@ const exitStyles = {
     padding: 16,
     background: "linear-gradient(180deg, #f0fdf4, #ffffff)",
     overflow: "hidden",
+    boxSizing: "border-box",
   },
   sectionBadge: {
     display: "inline-block",
@@ -1358,6 +1456,8 @@ const exitStyles = {
     marginBottom: 10,
     maxWidth: "100%",
     boxSizing: "border-box",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   sectionTitle: {
     fontSize: 22,
@@ -1365,6 +1465,8 @@ const exitStyles = {
     color: "#0f172a",
     textAlign: "center",
     lineHeight: 1.2,
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   sectionText: {
     maxWidth: 760,
@@ -1373,6 +1475,8 @@ const exitStyles = {
     color: "#334155",
     lineHeight: 1.6,
     textAlign: "center",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
 };
 
@@ -1396,6 +1500,7 @@ const modalStyles = {
     position: "relative",
     boxShadow: "0 25px 60px rgba(0,0,0,0.28)",
     textAlign: "center",
+    boxSizing: "border-box",
   },
   closeBtn: {
     position: "absolute",
@@ -1416,6 +1521,8 @@ const modalStyles = {
     padding: "7px 12px",
     fontSize: 12,
     fontWeight: 900,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   title: {
     marginTop: 14,
@@ -1423,6 +1530,8 @@ const modalStyles = {
     lineHeight: 1.18,
     fontWeight: 900,
     color: "#0f172a",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   strong: {
     color: "#dc2626",
@@ -1432,6 +1541,8 @@ const modalStyles = {
     fontSize: 15,
     lineHeight: 1.6,
     color: "#334155",
+    wordBreak: "normal",
+    overflowWrap: "break-word",
   },
   ctaRow: {
     marginTop: 18,
@@ -1448,6 +1559,7 @@ const modalStyles = {
     fontSize: 17,
     fontWeight: 900,
     cursor: "pointer",
+    boxSizing: "border-box",
   },
   secondaryBtn: {
     width: "100%",
@@ -1459,6 +1571,7 @@ const modalStyles = {
     fontSize: 15,
     fontWeight: 800,
     cursor: "pointer",
+    boxSizing: "border-box",
   },
 };
 
@@ -1472,71 +1585,123 @@ if (typeof window !== "undefined") {
     const style = document.createElement("style");
     style.id = styleId;
     style.innerHTML = `
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body, #root {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
       @media (max-width: 768px) {
         .quiz-root-page {
           padding: 10px !important;
+          align-items: flex-start !important;
         }
 
         .quiz-main-card {
           border-radius: 18px !important;
           padding: 18px 14px !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow: hidden !important;
         }
 
         .exit-price-card-mobile {
           grid-template-columns: 1fr !important;
           gap: 14px !important;
           padding: 14px !important;
+          width: 100% !important;
+          max-width: 100% !important;
         }
 
         .exit-title-mobile {
-          font-size: 17px !important;
+          font-size: 20px !important;
+          line-height: 1.2 !important;
+          text-align: left !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-hero-title-mobile {
           font-size: 19px !important;
           line-height: 1.18 !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-price-new-mobile {
           font-size: 22px !important;
           line-height: 1.1 !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-coupon-code-mobile {
           font-size: 20px !important;
           letter-spacing: 0.5px !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-mini-tag-mobile {
           font-size: 11px !important;
           line-height: 1.2 !important;
+          max-width: 100% !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-top-alert-mobile {
           font-size: 12px !important;
           line-height: 1.35 !important;
           padding: 10px 12px !important;
+          text-align: center !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-timer-box-mobile {
           font-size: 12px !important;
           line-height: 1.35 !important;
           padding: 9px 12px !important;
+          text-align: center !important;
+          max-width: 100% !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-section-title-mobile {
           font-size: 18px !important;
           line-height: 1.2 !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
         }
 
         .exit-cta-mobile {
           font-size: 15px !important;
           padding: 14px !important;
+          white-space: normal !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
         }
 
         .offers-bottom-cta-mobile {
           font-size: 16px !important;
           padding: 14px !important;
+          white-space: normal !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
         }
       }
     `;
