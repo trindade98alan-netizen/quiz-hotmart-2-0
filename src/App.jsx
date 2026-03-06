@@ -92,8 +92,8 @@ const offer = {
   id: "card1",
   title: "Planilha Vida Sem Dívidas",
   subtitle: "Acesso vitalício",
-  oldPrice: "R$197,00", // <-- ancoragem alterada
-  newPrice: "R$47,00",  // <-- preço alterado
+  oldPrice: "R$97,00",
+  newPrice: "R$24,90",
   url: "https://pay.hotmart.com/Y104727959E?checkoutMode=10",
   image: "/card1.png",
   bullets: [
@@ -106,33 +106,46 @@ const offer = {
   ],
 };
 
-/* =========================
-   3) DEPOIMENTOS
-========================= */
-
-const testimonials = [
+const bonuses = [
   {
-    text:
-      "Eu sempre perdia o controle das pequenas despesas. Com a planilha, passei a acompanhar tudo e já estou conseguindo guardar uma reserva mensal!",
-    name: "Maria Silva",
-    role: "Trabalhadora autônoma",
-    avatar: "/maria.jpg",
+    title: "2026 do Zero ao Sonho",
+    image: "/2026.png",
+    description:
+      "Transforme sonhos financeiros em metas reais com um método direto para planejar, agir e conquistar ainda este ano.",
   },
   {
-    text:
-      "Simples de usar e muito prática. Consegui organizar minhas contas e criar um orçamento mensal que realmente funciona. Vale cada centavo!",
-    name: "Breno Silva",
-    role: "Auxiliar de TI",
-    avatar: "/breno.jpg",
+    title: "Como Sair das Dívidas de Forma Simples",
+    image: "/dividas.png",
+    description:
+      "Aprenda um caminho simples e objetivo para retomar o controle e começar a sair das dívidas sem complicação.",
   },
   {
-    text:
-      "Achei que organização financeira fosse complicado até usar essa planilha. Intuitiva e com relatórios que me ajudam a decidir melhor!",
-    name: "Paulo B.",
-    role: "Funcionário",
-    avatar: "/paulo.jpg",
+    title: "Checklist Quitação Acelerada",
+    image: "/acelerada.png",
+    description:
+      "Um passo a passo prático para quem tem baixa renda e precisa quitar dívidas mais rápido com estratégia.",
+  },
+  {
+    title: "Raio-X dos Gastos Invisíveis",
+    image: "/raio.png",
+    description:
+      "Descubra os vazamentos escondidos que fazem seu dinheiro sumir e elimine os gastos que sabotam seu mês.",
+  },
+  {
+    title: "Renda Extra Estratégica",
+    image: "/renda.png",
+    description:
+      "Descubra a forma de renda extra mais adequada ao seu perfil para começar do jeito certo e com mais resultado.",
+  },
+  {
+    title: "Suporte Humanizado no Whatsapp",
+    image: "/suporte.png",
+    description:
+      "Tire dúvidas e receba ajuda real para aplicar tudo com confiança, sem travar no meio do processo.",
   },
 ];
+
+const testimonialImages = ["/w1.jpeg", "/w2.jpeg", "/w3.jpeg", "/w4.jpeg", "/w5.jpeg"];
 
 /* =========================
    4) CONTADOR (10 min)
@@ -154,11 +167,33 @@ function useCountdown(startSeconds = 600) {
 }
 
 /* =========================
+   HELPERS
+========================= */
+
+function redirectToCheckout(buttonName = "cta_click") {
+  utmifyTrack(buttonName, {
+    offerId: offer.id,
+    offerTitle: offer.title,
+  });
+
+  const currentParams = new URLSearchParams(window.location.search);
+  const paramsString = currentParams.toString();
+
+  let finalUrl = offer.url;
+
+  if (paramsString) {
+    finalUrl += (finalUrl.includes("?") ? "&" : "?") + paramsString;
+  }
+
+  window.location.href = finalUrl;
+}
+
+/* =========================
    APP
 ========================= */
 
 export default function App() {
-  const [stage, setStage] = useState("hook"); // hook | quiz | offers
+  const [stage, setStage] = useState("hook");
   const [current, setCurrent] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
 
@@ -188,7 +223,6 @@ export default function App() {
     }
   }
 
-  /* ===== PÁGINA 1: ENTRADA com MOCKUP ===== */
   if (stage === "hook") {
     return (
       <div style={styles.page}>
@@ -215,7 +249,6 @@ export default function App() {
     );
   }
 
-  /* ===== QUIZ ===== */
   if (stage === "quiz") {
     const q = questions[current];
 
@@ -277,14 +310,12 @@ function OffersPage({ totalScore, maxScore }) {
   return (
     <div style={styles.page}>
       <div style={{ ...styles.card, padding: 18 }}>
-        {/* Contador */}
         <div style={offersStyles.timerWrap}>
           <div style={offersStyles.timerText}>
             GARANTA AGORA COM DESCONTO <span style={offersStyles.timer}>{time}</span>
           </div>
         </div>
 
-        {/* Título + Diagnóstico */}
         <div style={{ textAlign: "center", marginTop: 8 }}>
           <div style={offersStyles.headerTag}>SUA MELHOR OPÇÃO</div>
           <div style={offersStyles.headerTitle}>Seu diagnóstico está pronto ✅</div>
@@ -296,17 +327,14 @@ function OffersPage({ totalScore, maxScore }) {
           </div>
         </div>
 
-        {/* Imagem planilha */}
         <div style={offersStyles.planilhaOnlyWrap}>
           <img src="/planilha.png" alt="Planilha" style={offersStyles.planilhaOnlyImg} />
         </div>
 
-        {/* Card único */}
         <div style={offersStyles.gridOne}>
-          <OfferCard offer={offer} />
+          <OfferCard offer={offer} bonuses={bonuses} />
         </div>
 
-        {/* ===== GARANTIA ===== */}
         <div style={guaranteeStyles.wrap}>
           <div style={guaranteeStyles.badge}>GARANTIA TOTAL</div>
 
@@ -333,19 +361,23 @@ function OffersPage({ totalScore, maxScore }) {
           <img src="/garantia-7dias.png" alt="Garantia 7 dias" style={guaranteeStyles.image} />
         </div>
 
-        {/* Depoimentos */}
         <div style={{ marginTop: 18 }}>
           <h3 style={offersStyles.h3}>RELATOS DE QUEM ADQUIRIU</h3>
-          {testimonials.map((t, i) => (
-            <Testimonial key={i} {...t} />
-          ))}
+          <TestimonialsCarousel images={testimonialImages} />
+
+          <button
+            style={offersStyles.bottomCtaBtn}
+            onClick={() => redirectToCheckout("bottom_cta_click")}
+          >
+            Quero minha Planilha
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function OfferCard({ offer }) {
+function OfferCard({ offer, bonuses }) {
   return (
     <div style={offersStyles.card}>
       <div style={offersStyles.cardTitle}>{offer.title}</div>
@@ -372,54 +404,88 @@ function OfferCard({ offer }) {
 
       <button
         style={offersStyles.buyBtn}
-        onClick={() => {
-          utmifyTrack("offer_click", { offerId: offer.id, offerTitle: offer.title });
-
-          const currentParams = new URLSearchParams(window.location.search);
-          const paramsString = currentParams.toString();
-
-          let finalUrl = offer.url;
-
-          if (paramsString) {
-            finalUrl += (offer.url.includes("?") ? "&" : "?") + paramsString;
-          }
-
-          window.location.href = finalUrl;
-        }}
+        onClick={() => redirectToCheckout("offer_click")}
       >
         Quero esse
       </button>
 
-      {/* ===== TEXTO PERSUASIVO ABAIXO DO BOTÃO (BÔNUS) ===== */}
-      <div style={offersStyles.bonusWrap}>
-        <div style={offersStyles.bonusBadge}>🎁 BÔNUS EXCLUSIVOS DO QUIZ</div>
-        <div style={offersStyles.bonusText}>
-          <strong>ATENÇÃO:</strong> além da planilha, ao clicar em <strong>“Quero esse”</strong>{" "}
-          você vai desbloquear <strong>2 bônus especiais</strong> que{" "}
-          <strong>só são liberados pra quem respondeu todo o quiz</strong>.
-          <br />
-          <span style={offersStyles.bonusCuriosity}>
-            (Você vai ver quais são <strong>na próxima tela</strong> 👀)
-          </span>
+      <div style={offersStyles.bonusSection}>
+        <div style={offersStyles.bonusHeaderBadge}>🎁 6 BÔNUS ESPECIAIS INCLUSOS</div>
+        <div style={offersStyles.bonusHeaderTitle}>
+          Ao garantir hoje, você não leva só a planilha…
+        </div>
+        <div style={offersStyles.bonusHeaderText}>
+          Você também recebe <strong>6 bônus práticos e valiosos</strong> para acelerar
+          sua organização financeira, sair das dívidas e construir novas fontes de renda.
+        </div>
+
+        <div style={offersStyles.bonusGrid}>
+          {bonuses.map((bonus, index) => (
+            <div key={index} style={offersStyles.bonusCard}>
+              <div style={offersStyles.bonusImageWrapVertical}>
+                <img src={bonus.image} alt={bonus.title} style={offersStyles.bonusImageVertical} />
+              </div>
+              <div style={offersStyles.bonusCardTitle}>{bonus.title}</div>
+              <div style={offersStyles.bonusCardDesc}>{bonus.description}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-function Testimonial({ text, name, role, avatar }) {
+function TestimonialsCarousel({ images }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  function prevSlide() {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }
+
+  function nextSlide() {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }
+
   return (
-    <div style={offersStyles.testimonial}>
-      <div style={offersStyles.testHeader}>
-        <img src={avatar} alt={name} style={offersStyles.avatar} />
-        <div>
-          <div style={offersStyles.testName}>{name}</div>
-          <div style={offersStyles.testRole}>{role}</div>
-        </div>
+    <div style={carouselStyles.wrap}>
+      <button
+        style={{ ...carouselStyles.arrowBtn, left: 10 }}
+        onClick={prevSlide}
+        aria-label="Anterior"
+      >
+        ‹
+      </button>
+
+      <div style={carouselStyles.viewport}>
+        <img
+          src={images[currentIndex]}
+          alt={`Depoimento ${currentIndex + 1}`}
+          style={carouselStyles.image}
+        />
       </div>
 
-      <div style={{ marginBottom: 6, marginTop: 10 }}>{"⭐".repeat(5)}</div>
-      <div style={{ fontSize: 14, lineHeight: 1.45, color: "#111827" }}>{text}</div>
+      <button
+        style={{ ...carouselStyles.arrowBtn, right: 10 }}
+        onClick={nextSlide}
+        aria-label="Próximo"
+      >
+        ›
+      </button>
+
+      <div style={carouselStyles.dots}>
+        {images.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            style={{
+              ...carouselStyles.dot,
+              opacity: currentIndex === index ? 1 : 0.35,
+              transform: currentIndex === index ? "scale(1.15)" : "scale(1)",
+            }}
+            aria-label={`Ir para depoimento ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -531,7 +597,14 @@ const offersStyles = {
     fontWeight: 900,
     letterSpacing: 0.3,
   },
-  timer: { marginLeft: 8, padding: "4px 8px", borderRadius: 999, background: "#16a34a", color: "white", fontWeight: 900 },
+  timer: {
+    marginLeft: 8,
+    padding: "4px 8px",
+    borderRadius: 999,
+    background: "#16a34a",
+    color: "white",
+    fontWeight: 900,
+  },
 
   headerTag: {
     display: "inline-block",
@@ -560,7 +633,7 @@ const offersStyles = {
     marginTop: 18,
     display: "grid",
     gap: 14,
-    gridTemplateColumns: "minmax(260px, 520px)",
+    gridTemplateColumns: "minmax(260px, 700px)",
     justifyContent: "center",
     alignItems: "start",
   },
@@ -593,12 +666,25 @@ const offersStyles = {
   },
   cardImage: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
 
-  priceBox: { marginTop: 12, borderRadius: 14, padding: 12, background: "#f8fafc", border: "1px solid #e5e7eb" },
+  priceBox: {
+    marginTop: 12,
+    borderRadius: 14,
+    padding: 12,
+    background: "#f8fafc",
+    border: "1px solid #e5e7eb",
+  },
   oldPrice: { fontSize: 12, color: "#6b7280", textDecoration: "line-through" },
   newPrice: { marginTop: 6, fontSize: 20, fontWeight: 900, color: "#0f172a" },
 
   bullets: { listStyle: "none", padding: 0, margin: "12px 0 0 0" },
-  bulletItem: { fontSize: 12, color: "#334155", marginTop: 8, lineHeight: 1.35, whiteSpace: "normal", wordBreak: "break-word" },
+  bulletItem: {
+    fontSize: 12,
+    color: "#334155",
+    marginTop: 8,
+    lineHeight: 1.35,
+    whiteSpace: "normal",
+    wordBreak: "break-word",
+  },
 
   buyBtn: {
     width: "100%",
@@ -613,16 +699,15 @@ const offersStyles = {
     marginTop: "auto",
   },
 
-  /* ===== BÔNUS ABAIXO DO BOTÃO ===== */
-  bonusWrap: {
-    marginTop: 12,
-    borderRadius: 14,
+  bonusSection: {
+    marginTop: 16,
+    borderRadius: 16,
     border: "2px solid #16a34a",
     background: "linear-gradient(180deg, #ecfdf5, #ffffff)",
-    padding: 12,
+    padding: 14,
     textAlign: "center",
   },
-  bonusBadge: {
+  bonusHeaderBadge: {
     display: "inline-block",
     padding: "6px 10px",
     borderRadius: 999,
@@ -632,27 +717,150 @@ const offersStyles = {
     fontWeight: 900,
     letterSpacing: 0.3,
   },
-  bonusText: {
+  bonusHeaderTitle: {
     marginTop: 10,
-    fontSize: 13,
-    lineHeight: 1.5,
+    fontSize: 18,
+    fontWeight: 900,
     color: "#0f172a",
+    lineHeight: 1.25,
   },
-  bonusCuriosity: {
-    display: "inline-block",
+  bonusHeaderText: {
     marginTop: 8,
     fontSize: 13,
+    lineHeight: 1.55,
+    color: "#334155",
+    maxWidth: 620,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  bonusGrid: {
+    marginTop: 16,
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: 12,
+    alignItems: "start",
+  },
+  bonusCard: {
+    border: "1px solid #d1fae5",
+    background: "#ffffff",
+    borderRadius: 14,
+    padding: 12,
+    textAlign: "left",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+  },
+  bonusImageWrapVertical: {
+    width: "100%",
+    maxWidth: 240,
+    margin: "0 auto 10px auto",
+    borderRadius: 14,
+    overflow: "hidden",
+    background: "#0b1220",
+    aspectRatio: "9 / 16",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bonusImageVertical: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    display: "block",
+    background: "#000000",
+  },
+  bonusCardTitle: {
+    fontSize: 14,
     fontWeight: 900,
-    color: "#065f46",
+    color: "#0f172a",
+    lineHeight: 1.3,
+    textAlign: "center",
+  },
+  bonusCardDesc: {
+    marginTop: 6,
+    fontSize: 12,
+    lineHeight: 1.5,
+    color: "#334155",
+    textAlign: "left",
   },
 
-  h3: { fontSize: 13, letterSpacing: 0.6, margin: "0 0 10px 0", textAlign: "center" },
+  h3: {
+    fontSize: 13,
+    letterSpacing: 0.6,
+    margin: "0 0 10px 0",
+    textAlign: "center",
+  },
 
-  testimonial: { border: "1px solid #e5e7eb", background: "#ffffff", borderRadius: 14, padding: 14, marginTop: 10, textAlign: "left" },
-  testHeader: { display: "flex", alignItems: "center", gap: 10 },
-  avatar: { width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: "1px solid #e5e7eb" },
-  testName: { fontWeight: 900, color: "#111827", fontSize: 14, lineHeight: 1.2 },
-  testRole: { color: "#64748b", fontSize: 12, marginTop: 2 },
+  bottomCtaBtn: {
+    width: "100%",
+    maxWidth: 420,
+    padding: 16,
+    borderRadius: 12,
+    border: "none",
+    background: "#16a34a",
+    color: "white",
+    fontSize: 18,
+    fontWeight: 900,
+    cursor: "pointer",
+    margin: "18px auto 0 auto",
+    display: "block",
+    boxShadow: "0 10px 24px rgba(22, 163, 74, 0.28)",
+  },
+};
+
+const carouselStyles = {
+  wrap: {
+    position: "relative",
+    width: "100%",
+    maxWidth: 420,
+    margin: "0 auto",
+  },
+  viewport: {
+    width: "100%",
+    borderRadius: 18,
+    overflow: "hidden",
+    background: "#0b1220",
+    boxShadow: "0 12px 28px rgba(0,0,0,0.18)",
+  },
+  image: {
+    width: "100%",
+    height: "auto",
+    display: "block",
+    objectFit: "contain",
+  },
+  arrowBtn: {
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    width: 42,
+    height: 42,
+    borderRadius: "50%",
+    border: "none",
+    background: "rgba(15, 23, 42, 0.82)",
+    color: "#ffffff",
+    fontSize: 28,
+    lineHeight: 1,
+    cursor: "pointer",
+    zIndex: 2,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 8px 18px rgba(0,0,0,0.2)",
+  },
+  dots: {
+    marginTop: 12,
+    display: "flex",
+    justifyContent: "center",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    border: "none",
+    background: "#16a34a",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
 };
 
 const guaranteeStyles = {
