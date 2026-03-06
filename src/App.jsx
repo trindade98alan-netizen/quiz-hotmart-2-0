@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 /* =========================
    UTMIFY EVENTS (helpers)
@@ -85,10 +85,10 @@ const questions = [
 ];
 
 /* =========================
-   2) OFERTA ÚNICA (Hotmart)
+   2) OFERTA PRINCIPAL / SAÍDA
 ========================= */
 
-const offer = {
+const mainOffer = {
   id: "card1",
   title: "Planilha Vida Sem Dívidas",
   subtitle: "Acesso vitalício",
@@ -105,6 +105,21 @@ const offer = {
     "Feita para iniciantes e experientes",
   ],
 };
+
+const exitOffer = {
+  id: "exit-offer",
+  title: "Oferta de Saída Exclusiva",
+  subtitle: "Liberada só porque você chegou até aqui",
+  oldPrice: "R$24,90",
+  newPrice: "R$19,90",
+  coupon: "OPORTUNIDADE",
+  url: "https://pay.hotmart.com/Y104727959E?checkoutMode=10",
+  image: "/card1.png",
+};
+
+/* =========================
+   3) BÔNUS / DEPOIMENTOS
+========================= */
 
 const bonuses = [
   {
@@ -148,7 +163,7 @@ const bonuses = [
 const testimonialImages = ["/w1.jpeg", "/w2.jpeg", "/w3.jpeg", "/w4.jpeg", "/w5.jpeg"];
 
 /* =========================
-   4) CONTADOR (10 min)
+   4) CONTADOR
 ========================= */
 
 function useCountdown(startSeconds = 600) {
@@ -170,8 +185,8 @@ function useCountdown(startSeconds = 600) {
    HELPERS
 ========================= */
 
-function redirectToCheckout(buttonName = "cta_click") {
-  utmifyTrack(buttonName, {
+function redirectToCheckout(offer, eventName = "cta_click") {
+  utmifyTrack(eventName, {
     offerId: offer.id,
     offerTitle: offer.title,
   });
@@ -193,7 +208,7 @@ function redirectToCheckout(buttonName = "cta_click") {
 ========================= */
 
 export default function App() {
-  const [stage, setStage] = useState("hook");
+  const [stage, setStage] = useState("hook"); // hook | quiz | offers | exit-offer
   const [current, setCurrent] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
 
@@ -290,14 +305,29 @@ export default function App() {
     );
   }
 
-  return <OffersPage totalScore={totalScore} maxScore={maxScore} />;
+  if (stage === "exit-offer") {
+    return (
+      <ExitOfferPage
+        offer={exitOffer}
+        onBackToMain={() => setStage("offers")}
+      />
+    );
+  }
+
+  return (
+    <OffersPage
+      totalScore={totalScore}
+      maxScore={maxScore}
+      onExitIntent={() => setStage("exit-offer")}
+    />
+  );
 }
 
 /* =========================
-   PÁGINA FINAL (OFERTA)
+   PÁGINA PRINCIPAL DE OFERTA
 ========================= */
 
-function OffersPage({ totalScore, maxScore }) {
+function OffersPage({ totalScore, maxScore, onExitIntent }) {
   const time = useCountdown(10 * 60);
 
   const perfil =
@@ -306,6 +336,8 @@ function OffersPage({ totalScore, maxScore }) {
       : totalScore <= 13
       ? "Você até se vira, mas está perdendo dinheiro no descontrole invisível 👀"
       : "Você já tem uma boa base — agora é manter consistência e otimizar 📌";
+
+  useExitRedirect(onExitIntent, "main_exit_intent");
 
   return (
     <div style={styles.page}>
@@ -332,7 +364,7 @@ function OffersPage({ totalScore, maxScore }) {
         </div>
 
         <div style={offersStyles.gridOne}>
-          <OfferCard offer={offer} bonuses={bonuses} />
+          <OfferCard offer={mainOffer} bonuses={bonuses} />
         </div>
 
         <div style={guaranteeStyles.wrap}>
@@ -367,7 +399,7 @@ function OffersPage({ totalScore, maxScore }) {
 
           <button
             style={offersStyles.bottomCtaBtn}
-            onClick={() => redirectToCheckout("bottom_cta_click")}
+            onClick={() => redirectToCheckout(mainOffer, "bottom_cta_click")}
           >
             Quero minha Planilha
           </button>
@@ -376,6 +408,116 @@ function OffersPage({ totalScore, maxScore }) {
     </div>
   );
 }
+
+/* =========================
+   PÁGINA DE SAÍDA / DESCONTO
+========================= */
+
+function ExitOfferPage({ offer, onBackToMain }) {
+  const time = useCountdown(7 * 60);
+
+  return (
+    <div style={styles.page}>
+      <div style={{ ...styles.card, padding: 18 }}>
+        <div style={exitStyles.topAlert}>
+          ⚠️ ESPERE! Antes de sair, eu liberei uma condição especial só nesta tela
+        </div>
+
+        <div style={exitStyles.heroWrap}>
+          <div style={exitStyles.heroBadge}>DESCONTO DE SAÍDA</div>
+          <div style={exitStyles.heroTitle}>
+            Não feche essa página sem pegar sua <span style={exitStyles.heroStrong}>oferta final</span>
+          </div>
+          <div style={exitStyles.heroText}>
+            Como você chegou até aqui, eu destravei uma última chance para levar a
+            <strong> Planilha Vida Sem Dívidas</strong> com valor reduzido.
+          </div>
+        </div>
+
+        <div style={exitStyles.timerBox}>
+          Essa condição expira em <span style={exitStyles.timerValue}>{time}</span>
+        </div>
+
+        <div style={exitStyles.priceCard}>
+          <img src={offer.image} alt={offer.title} style={exitStyles.priceImage} />
+
+          <div style={exitStyles.priceInfo}>
+            <div style={exitStyles.offerMiniTag}>OFERTA DE SAÍDA EXCLUSIVA</div>
+            <div style={exitStyles.offerTitle}>{offer.title}</div>
+            <div style={exitStyles.offerSubtitle}>{offer.subtitle}</div>
+
+            <div style={exitStyles.priceLineOld}>De {offer.oldPrice}</div>
+            <div style={exitStyles.priceLineNew}>Por apenas {offer.newPrice}</div>
+            <div style={exitStyles.priceObs}>
+              Mesmo acesso, mesmos bônus e uma última chance antes de você sair.
+            </div>
+
+            <div style={exitStyles.couponBox}>
+              <div style={exitStyles.couponLabel}>USE ESTE CUPOM NO CHECKOUT:</div>
+              <div style={exitStyles.couponCode}>{offer.coupon}</div>
+              <div style={exitStyles.couponHint}>
+                Ao clicar no botão abaixo, aplique a palavra <strong>{offer.coupon}</strong> no campo de cupom
+                para liberar o desconto da oferta de saída.
+              </div>
+            </div>
+
+            <button
+              style={exitStyles.ctaBtn}
+              onClick={() => redirectToCheckout(offer, "exit_offer_click")}
+            >
+              Quero aproveitar com o cupom OPORTUNIDADE
+            </button>
+
+            <button
+              style={exitStyles.backBtn}
+              onClick={onBackToMain}
+            >
+              Voltar para a oferta anterior
+            </button>
+          </div>
+        </div>
+
+        <div style={exitStyles.bonusSection}>
+          <div style={exitStyles.sectionBadge}>🎁 TODOS OS BÔNUS CONTINUAM INCLUSOS</div>
+          <div style={exitStyles.sectionTitle}>Você não leva só a planilha</div>
+          <div style={exitStyles.sectionText}>
+            Além da planilha, você também recebe os bônus abaixo para acelerar sua organização,
+            sair das dívidas e enxergar novas oportunidades financeiras.
+          </div>
+
+          <div style={offersStyles.bonusGrid}>
+            {bonuses.map((bonus, index) => (
+              <div key={index} style={offersStyles.bonusCard}>
+                <div style={offersStyles.bonusImageWrapVertical}>
+                  <img src={bonus.image} alt={bonus.title} style={offersStyles.bonusImageVertical} />
+                </div>
+                <div style={offersStyles.bonusCardTitle}>{bonus.title}</div>
+                <div style={offersStyles.bonusCardDesc}>{bonus.description}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 22 }}>
+          <div style={exitStyles.sectionBadge}>🔥 VEJA O QUE ESTÃO FALANDO</div>
+          <div style={exitStyles.sectionTitle}>Provas reais de quem adquiriu</div>
+          <TestimonialsCarousel images={testimonialImages} />
+
+          <button
+            style={offersStyles.bottomCtaBtn}
+            onClick={() => redirectToCheckout(offer, "exit_bottom_cta_click")}
+          >
+            Quero minha Planilha com o cupom OPORTUNIDADE
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   CARD DE OFERTA
+========================= */
 
 function OfferCard({ offer, bonuses }) {
   return (
@@ -404,7 +546,7 @@ function OfferCard({ offer, bonuses }) {
 
       <button
         style={offersStyles.buyBtn}
-        onClick={() => redirectToCheckout("offer_click")}
+        onClick={() => redirectToCheckout(offer, "offer_click")}
       >
         Quero esse
       </button>
@@ -434,6 +576,10 @@ function OfferCard({ offer, bonuses }) {
     </div>
   );
 }
+
+/* =========================
+   CARROSSEL DE DEPOIMENTOS
+========================= */
 
 function TestimonialsCarousel({ images }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -491,6 +637,40 @@ function TestimonialsCarousel({ images }) {
 }
 
 /* =========================
+   DETECTAR SAÍDA / VOLTAR
+========================= */
+
+function useExitRedirect(onExitIntent, trackEventName = "exit_intent") {
+  const hasTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    const state = { page: "offer-page" };
+    window.history.pushState(state, "", window.location.href);
+
+    function handlePopState() {
+      if (hasTriggeredRef.current) return;
+      hasTriggeredRef.current = true;
+      utmifyTrack(trackEventName);
+      onExitIntent();
+    }
+
+    function handleBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [onExitIntent, trackEventName]);
+}
+
+/* =========================
    ESTILOS
 ========================= */
 
@@ -527,7 +707,6 @@ const styles = {
     justifyContent: "center",
   },
   mockImg: { width: "100%", height: "100%", objectFit: "contain", display: "block" },
-
   title: { fontSize: 22, marginBottom: 10, color: "#0f172a" },
   subtitle: { fontSize: 14, color: "#475569", marginBottom: 14, lineHeight: 1.45 },
   badgeRow: { display: "flex", justifyContent: "center", marginBottom: 14 },
@@ -550,7 +729,6 @@ const styles = {
     fontWeight: 800,
     cursor: "pointer",
   },
-
   topRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
   stepPill: {
     fontSize: 12,
@@ -563,10 +741,8 @@ const styles = {
   stepPct: { fontSize: 12, fontWeight: 800, color: "#16a34a" },
   progressBar: { width: "100%", height: 8, background: "#e2e8f0", borderRadius: 10, overflow: "hidden", marginBottom: 18 },
   progressFill: { height: "100%", background: "#16a34a", transition: "width 0.25s ease" },
-
   qTitle: { fontSize: 17, marginBottom: 10, color: "#0f172a", lineHeight: 1.35 },
   qDesc: { fontSize: 13, color: "#64748b", marginBottom: 12, lineHeight: 1.45 },
-
   optionBtn: {
     width: "100%",
     padding: 14,
@@ -605,7 +781,6 @@ const offersStyles = {
     color: "white",
     fontWeight: 900,
   },
-
   headerTag: {
     display: "inline-block",
     padding: "6px 12px",
@@ -618,7 +793,6 @@ const offersStyles = {
   },
   headerTitle: { fontSize: 18, fontWeight: 900, color: "#0f172a" },
   headerSub: { marginTop: 8, fontSize: 13, color: "#334155", lineHeight: 1.45 },
-
   planilhaOnlyWrap: {
     width: "100%",
     maxWidth: 720,
@@ -628,7 +802,6 @@ const offersStyles = {
     background: "transparent",
   },
   planilhaOnlyImg: { width: "100%", height: "auto", display: "block", borderRadius: 18 },
-
   gridOne: {
     marginTop: 18,
     display: "grid",
@@ -637,7 +810,6 @@ const offersStyles = {
     justifyContent: "center",
     alignItems: "start",
   },
-
   card: {
     position: "relative",
     border: "1px solid #e5e7eb",
@@ -649,10 +821,8 @@ const offersStyles = {
     display: "flex",
     flexDirection: "column",
   },
-
   cardTitle: { fontSize: 16, fontWeight: 900, color: "#0f172a" },
   cardSubtitle: { fontSize: 12, color: "#64748b", marginTop: 4 },
-
   cardImageWrap: {
     width: "100%",
     marginTop: 10,
@@ -665,7 +835,6 @@ const offersStyles = {
     justifyContent: "center",
   },
   cardImage: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
-
   priceBox: {
     marginTop: 12,
     borderRadius: 14,
@@ -675,7 +844,6 @@ const offersStyles = {
   },
   oldPrice: { fontSize: 12, color: "#6b7280", textDecoration: "line-through" },
   newPrice: { marginTop: 6, fontSize: 20, fontWeight: 900, color: "#0f172a" },
-
   bullets: { listStyle: "none", padding: 0, margin: "12px 0 0 0" },
   bulletItem: {
     fontSize: 12,
@@ -685,7 +853,6 @@ const offersStyles = {
     whiteSpace: "normal",
     wordBreak: "break-word",
   },
-
   buyBtn: {
     width: "100%",
     padding: 14,
@@ -698,7 +865,6 @@ const offersStyles = {
     cursor: "pointer",
     marginTop: "auto",
   },
-
   bonusSection: {
     marginTop: 16,
     borderRadius: 16,
@@ -781,14 +947,12 @@ const offersStyles = {
     color: "#334155",
     textAlign: "left",
   },
-
   h3: {
     fontSize: 13,
     letterSpacing: 0.6,
     margin: "0 0 10px 0",
     textAlign: "center",
   },
-
   bottomCtaBtn: {
     width: "100%",
     maxWidth: 420,
@@ -910,5 +1074,206 @@ const guaranteeStyles = {
     display: "block",
     margin: "14px auto 0 auto",
     borderRadius: 14,
+  },
+};
+
+const exitStyles = {
+  topAlert: {
+    width: "100%",
+    background: "#7f1d1d",
+    color: "#ffffff",
+    padding: "12px 14px",
+    borderRadius: 14,
+    fontWeight: 900,
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  heroWrap: {
+    textAlign: "center",
+  },
+  heroBadge: {
+    display: "inline-block",
+    padding: "6px 12px",
+    borderRadius: 999,
+    background: "#111827",
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 900,
+    marginBottom: 10,
+  },
+  heroTitle: {
+    fontSize: 26,
+    fontWeight: 900,
+    color: "#0f172a",
+    lineHeight: 1.2,
+  },
+  heroStrong: {
+    color: "#dc2626",
+  },
+  heroText: {
+    maxWidth: 760,
+    margin: "10px auto 0 auto",
+    fontSize: 15,
+    color: "#334155",
+    lineHeight: 1.6,
+  },
+  timerBox: {
+    marginTop: 16,
+    display: "inline-block",
+    background: "#111827",
+    color: "#ffffff",
+    padding: "10px 16px",
+    borderRadius: 999,
+    fontWeight: 900,
+    fontSize: 13,
+  },
+  timerValue: {
+    marginLeft: 8,
+    background: "#dc2626",
+    borderRadius: 999,
+    padding: "4px 8px",
+  },
+  priceCard: {
+    marginTop: 18,
+    display: "grid",
+    gridTemplateColumns: "minmax(220px, 300px) 1fr",
+    gap: 18,
+    alignItems: "center",
+    border: "2px solid #fecaca",
+    borderRadius: 20,
+    padding: 18,
+    background: "linear-gradient(180deg, #fff1f2, #ffffff)",
+  },
+  priceImage: {
+    width: "100%",
+    borderRadius: 16,
+    display: "block",
+    background: "#0b1220",
+  },
+  priceInfo: {
+    textAlign: "left",
+  },
+  offerMiniTag: {
+    display: "inline-block",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "#dc2626",
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 900,
+  },
+  offerTitle: {
+    marginTop: 10,
+    fontSize: 24,
+    fontWeight: 900,
+    color: "#0f172a",
+  },
+  offerSubtitle: {
+    marginTop: 6,
+    fontSize: 13,
+    color: "#64748b",
+  },
+  priceLineOld: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#6b7280",
+    textDecoration: "line-through",
+    fontWeight: 700,
+  },
+  priceLineNew: {
+    marginTop: 6,
+    fontSize: 34,
+    color: "#dc2626",
+    fontWeight: 900,
+    lineHeight: 1.1,
+  },
+  priceObs: {
+    marginTop: 8,
+    fontSize: 14,
+    color: "#334155",
+    lineHeight: 1.5,
+  },
+  couponBox: {
+    marginTop: 14,
+    border: "2px dashed #dc2626",
+    borderRadius: 16,
+    background: "#ffffff",
+    padding: 14,
+    textAlign: "center",
+  },
+  couponLabel: {
+    fontSize: 12,
+    fontWeight: 900,
+    color: "#7f1d1d",
+    letterSpacing: 0.5,
+  },
+  couponCode: {
+    marginTop: 8,
+    fontSize: 28,
+    fontWeight: 900,
+    color: "#dc2626",
+    letterSpacing: 1.5,
+  },
+  couponHint: {
+    marginTop: 8,
+    fontSize: 13,
+    color: "#334155",
+    lineHeight: 1.5,
+  },
+  ctaBtn: {
+    width: "100%",
+    marginTop: 18,
+    padding: 16,
+    borderRadius: 14,
+    border: "none",
+    background: "#16a34a",
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: 900,
+    cursor: "pointer",
+    boxShadow: "0 10px 24px rgba(22, 163, 74, 0.28)",
+  },
+  backBtn: {
+    width: "100%",
+    marginTop: 10,
+    padding: 14,
+    borderRadius: 14,
+    border: "1px solid #cbd5e1",
+    background: "#ffffff",
+    color: "#0f172a",
+    fontSize: 14,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
+  bonusSection: {
+    marginTop: 22,
+    border: "2px solid #bbf7d0",
+    borderRadius: 18,
+    padding: 16,
+    background: "linear-gradient(180deg, #f0fdf4, #ffffff)",
+  },
+  sectionBadge: {
+    display: "inline-block",
+    padding: "6px 12px",
+    borderRadius: 999,
+    background: "#16a34a",
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 900,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 900,
+    color: "#0f172a",
+    textAlign: "center",
+  },
+  sectionText: {
+    maxWidth: 760,
+    margin: "10px auto 0 auto",
+    fontSize: 14,
+    color: "#334155",
+    lineHeight: 1.6,
+    textAlign: "center",
   },
 };
