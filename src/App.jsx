@@ -213,7 +213,7 @@ function isMobileDevice() {
 ========================= */
 
 export default function App() {
-  const [stage, setStage] = useState("hook"); // hook | quiz | offers | exit-offer
+  const [stage, setStage] = useState("hook");
   const [current, setCurrent] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
 
@@ -335,7 +335,6 @@ export default function App() {
 function OffersPage({ totalScore, maxScore, onExitIntent }) {
   const time = useCountdown(10 * 60);
   const [showExitModal, setShowExitModal] = useState(false);
-  const [showMobileBar, setShowMobileBar] = useState(false);
 
   const perfil =
     totalScore <= 8
@@ -346,11 +345,10 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
 
   useBackRedirect(onExitIntent, "main_exit_intent_back");
   useDesktopExitIntent(() => setShowExitModal(true), "main_exit_intent_desktop");
-  useMobileRecoveryBar(() => setShowMobileBar(true), "main_mobile_recovery_visible");
 
   return (
     <div style={styles.page}>
-      <div style={{ ...styles.card, padding: 18, paddingBottom: showMobileBar ? 92 : 18 }}>
+      <div style={{ ...styles.card, padding: 18 }}>
         <div style={offersStyles.timerWrap}>
           <div style={offersStyles.timerText}>
             GARANTA AGORA COM DESCONTO <span style={offersStyles.timer}>{time}</span>
@@ -424,13 +422,6 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
           }}
         />
       )}
-
-      {showMobileBar && (
-        <MobileRecoveryBar
-          onMainCta={() => redirectToCheckout(mainOffer, "mobile_bar_main_cta")}
-          onExitOffer={() => onExitIntent()}
-        />
-      )}
     </div>
   );
 }
@@ -465,7 +456,9 @@ function ExitOfferPage({ offer, onBackToMain }) {
         </div>
 
         <div style={exitStyles.priceCard}>
-          <img src={offer.image} alt={offer.title} style={exitStyles.priceImage} />
+          <div style={exitStyles.priceImageCol}>
+            <img src={offer.image} alt={offer.title} style={exitStyles.priceImage} />
+          </div>
 
           <div style={exitStyles.priceInfo}>
             <div style={exitStyles.offerMiniTag}>OFERTA DE SAÍDA EXCLUSIVA</div>
@@ -570,32 +563,6 @@ function ExitIntentModal({ onClose, onGoExitOffer }) {
             Continuar nesta página
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-/* =========================
-   BARRA FIXA DE RECUPERAÇÃO MOBILE
-========================= */
-
-function MobileRecoveryBar({ onMainCta, onExitOffer }) {
-  return (
-    <div style={mobileBarStyles.wrap}>
-      <div style={mobileBarStyles.textWrap}>
-        <div style={mobileBarStyles.title}>Oferta ainda disponível</div>
-        <div style={mobileBarStyles.sub}>
-          Continue agora ou veja a condição especial de saída.
-        </div>
-      </div>
-
-      <div style={mobileBarStyles.actions}>
-        <button style={mobileBarStyles.mainBtn} onClick={onMainCta}>
-          Comprar
-        </button>
-        <button style={mobileBarStyles.exitBtn} onClick={onExitOffer}>
-          Ver saída
-        </button>
       </div>
     </div>
   );
@@ -771,31 +738,6 @@ function useDesktopExitIntent(onIntent, trackEventName = "exit_intent_desktop") 
   }, [onIntent, trackEventName]);
 }
 
-function useMobileRecoveryBar(onShow, trackEventName = "mobile_recovery_bar") {
-  const shownRef = useRef(false);
-
-  useEffect(() => {
-    if (!isMobileDevice()) return;
-
-    function handleScroll() {
-      if (shownRef.current) return;
-      const scrollY = window.scrollY || window.pageYOffset;
-      if (scrollY > 450) {
-        shownRef.current = true;
-        utmifyTrack(trackEventName);
-        onShow();
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [onShow, trackEventName]);
-}
-
 /* =========================
    ESTILOS
 ========================= */
@@ -818,6 +760,7 @@ const styles = {
     textAlign: "center",
     boxShadow: "0 20px 40px rgba(0,0,0,0.22)",
     padding: "26px 22px",
+    overflow: "hidden",
   },
   mockWrap: {
     width: "100%",
@@ -898,6 +841,7 @@ const offersStyles = {
     fontSize: 12,
     fontWeight: 900,
     letterSpacing: 0.3,
+    textAlign: "center",
   },
   timer: {
     marginLeft: 8,
@@ -946,6 +890,7 @@ const offersStyles = {
     boxShadow: "0 10px 24px rgba(0,0,0,0.06)",
     display: "flex",
     flexDirection: "column",
+    overflow: "hidden",
   },
   cardTitle: { fontSize: 16, fontWeight: 900, color: "#0f172a" },
   cardSubtitle: { fontSize: 12, color: "#64748b", marginTop: 4 },
@@ -1039,6 +984,7 @@ const offersStyles = {
     padding: 12,
     textAlign: "left",
     boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+    overflow: "hidden",
   },
   bonusImageWrapVertical: {
     width: "100%",
@@ -1213,6 +1159,7 @@ const exitStyles = {
     fontWeight: 900,
     fontSize: 14,
     marginBottom: 16,
+    boxSizing: "border-box",
   },
   heroWrap: {
     textAlign: "center",
@@ -1252,23 +1199,32 @@ const exitStyles = {
     borderRadius: 999,
     fontWeight: 900,
     fontSize: 13,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   timerValue: {
     marginLeft: 8,
     background: "#dc2626",
     borderRadius: 999,
     padding: "4px 8px",
+    display: "inline-block",
   },
   priceCard: {
     marginTop: 18,
     display: "grid",
-    gridTemplateColumns: "minmax(220px, 300px) 1fr",
+    gridTemplateColumns: "minmax(220px, 300px) minmax(0, 1fr)",
     gap: 18,
     alignItems: "center",
     border: "2px solid #fecaca",
     borderRadius: 20,
     padding: 18,
     background: "linear-gradient(180deg, #fff1f2, #ffffff)",
+    overflow: "hidden",
+    boxSizing: "border-box",
+  },
+  priceImageCol: {
+    width: "100%",
+    minWidth: 0,
   },
   priceImage: {
     width: "100%",
@@ -1278,6 +1234,7 @@ const exitStyles = {
   },
   priceInfo: {
     textAlign: "left",
+    minWidth: 0,
   },
   offerMiniTag: {
     display: "inline-block",
@@ -1287,17 +1244,22 @@ const exitStyles = {
     color: "#ffffff",
     fontSize: 12,
     fontWeight: 900,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   offerTitle: {
     marginTop: 10,
     fontSize: 24,
     fontWeight: 900,
     color: "#0f172a",
+    lineHeight: 1.15,
+    wordBreak: "break-word",
   },
   offerSubtitle: {
     marginTop: 6,
     fontSize: 13,
     color: "#64748b",
+    lineHeight: 1.45,
   },
   priceLineOld: {
     marginTop: 16,
@@ -1305,6 +1267,7 @@ const exitStyles = {
     color: "#6b7280",
     textDecoration: "line-through",
     fontWeight: 700,
+    wordBreak: "break-word",
   },
   priceLineNew: {
     marginTop: 6,
@@ -1312,6 +1275,7 @@ const exitStyles = {
     color: "#dc2626",
     fontWeight: 900,
     lineHeight: 1.1,
+    wordBreak: "break-word",
   },
   priceObs: {
     marginTop: 8,
@@ -1326,12 +1290,15 @@ const exitStyles = {
     background: "#ffffff",
     padding: 14,
     textAlign: "center",
+    boxSizing: "border-box",
+    overflow: "hidden",
   },
   couponLabel: {
     fontSize: 12,
     fontWeight: 900,
     color: "#7f1d1d",
     letterSpacing: 0.5,
+    lineHeight: 1.4,
   },
   couponCode: {
     marginTop: 8,
@@ -1339,6 +1306,7 @@ const exitStyles = {
     fontWeight: 900,
     color: "#dc2626",
     letterSpacing: 1.5,
+    wordBreak: "break-word",
   },
   couponHint: {
     marginTop: 8,
@@ -1377,6 +1345,7 @@ const exitStyles = {
     borderRadius: 18,
     padding: 16,
     background: "linear-gradient(180deg, #f0fdf4, #ffffff)",
+    overflow: "hidden",
   },
   sectionBadge: {
     display: "inline-block",
@@ -1387,12 +1356,15 @@ const exitStyles = {
     fontSize: 12,
     fontWeight: 900,
     marginBottom: 10,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   sectionTitle: {
     fontSize: 22,
     fontWeight: 900,
     color: "#0f172a",
     textAlign: "center",
+    lineHeight: 1.2,
   },
   sectionText: {
     maxWidth: 760,
@@ -1490,58 +1462,84 @@ const modalStyles = {
   },
 };
 
-const mobileBarStyles = {
-  wrap: {
-    position: "fixed",
-    left: 10,
-    right: 10,
-    bottom: 10,
-    zIndex: 9998,
-    background: "#ffffff",
-    borderRadius: 18,
-    boxShadow: "0 18px 40px rgba(0,0,0,0.25)",
-    padding: 12,
-    display: "grid",
-    gap: 10,
-    border: "1px solid #e5e7eb",
-  },
-  textWrap: {
-    textAlign: "left",
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: 900,
-    color: "#0f172a",
-  },
-  sub: {
-    marginTop: 4,
-    fontSize: 12,
-    lineHeight: 1.4,
-    color: "#475569",
-  },
-  actions: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 8,
-  },
-  mainBtn: {
-    border: "none",
-    borderRadius: 12,
-    padding: 13,
-    background: "#16a34a",
-    color: "#ffffff",
-    fontSize: 14,
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-  exitBtn: {
-    border: "1px solid #cbd5e1",
-    borderRadius: 12,
-    padding: 13,
-    background: "#ffffff",
-    color: "#0f172a",
-    fontSize: 14,
-    fontWeight: 900,
-    cursor: "pointer",
-  },
-};
+/* =========================
+   RESPONSIVO MOBILE
+========================= */
+
+if (typeof window !== "undefined") {
+  const styleId = "quiz-mobile-exit-styles";
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement("style");
+    style.id = styleId;
+    style.innerHTML = `
+      @media (max-width: 768px) {
+        .quiz-root-page {
+          padding: 10px !important;
+        }
+
+        .quiz-main-card {
+          border-radius: 18px !important;
+          padding: 18px 14px !important;
+        }
+
+        .exit-price-card-mobile {
+          grid-template-columns: 1fr !important;
+          gap: 14px !important;
+          padding: 14px !important;
+        }
+
+        .exit-title-mobile {
+          font-size: 17px !important;
+        }
+
+        .exit-hero-title-mobile {
+          font-size: 19px !important;
+          line-height: 1.18 !important;
+        }
+
+        .exit-price-new-mobile {
+          font-size: 22px !important;
+          line-height: 1.1 !important;
+        }
+
+        .exit-coupon-code-mobile {
+          font-size: 20px !important;
+          letter-spacing: 0.5px !important;
+        }
+
+        .exit-mini-tag-mobile {
+          font-size: 11px !important;
+          line-height: 1.2 !important;
+        }
+
+        .exit-top-alert-mobile {
+          font-size: 12px !important;
+          line-height: 1.35 !important;
+          padding: 10px 12px !important;
+        }
+
+        .exit-timer-box-mobile {
+          font-size: 12px !important;
+          line-height: 1.35 !important;
+          padding: 9px 12px !important;
+        }
+
+        .exit-section-title-mobile {
+          font-size: 18px !important;
+          line-height: 1.2 !important;
+        }
+
+        .exit-cta-mobile {
+          font-size: 15px !important;
+          padding: 14px !important;
+        }
+
+        .offers-bottom-cta-mobile {
+          font-size: 16px !important;
+          padding: 14px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
