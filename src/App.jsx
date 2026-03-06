@@ -203,6 +203,11 @@ function redirectToCheckout(offer, eventName = "cta_click") {
   window.location.href = finalUrl;
 }
 
+function isMobileDevice() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
 /* =========================
    APP
 ========================= */
@@ -329,6 +334,8 @@ export default function App() {
 
 function OffersPage({ totalScore, maxScore, onExitIntent }) {
   const time = useCountdown(10 * 60);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [showMobileBar, setShowMobileBar] = useState(false);
 
   const perfil =
     totalScore <= 8
@@ -337,11 +344,13 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
       ? "Você até se vira, mas está perdendo dinheiro no descontrole invisível 👀"
       : "Você já tem uma boa base — agora é manter consistência e otimizar 📌";
 
-  useExitRedirect(onExitIntent, "main_exit_intent");
+  useBackRedirect(onExitIntent, "main_exit_intent_back");
+  useDesktopExitIntent(() => setShowExitModal(true), "main_exit_intent_desktop");
+  useMobileRecoveryBar(() => setShowMobileBar(true), "main_mobile_recovery_visible");
 
   return (
     <div style={styles.page}>
-      <div style={{ ...styles.card, padding: 18 }}>
+      <div style={{ ...styles.card, padding: 18, paddingBottom: showMobileBar ? 92 : 18 }}>
         <div style={offersStyles.timerWrap}>
           <div style={offersStyles.timerText}>
             GARANTA AGORA COM DESCONTO <span style={offersStyles.timer}>{time}</span>
@@ -405,6 +414,23 @@ function OffersPage({ totalScore, maxScore, onExitIntent }) {
           </button>
         </div>
       </div>
+
+      {showExitModal && (
+        <ExitIntentModal
+          onClose={() => setShowExitModal(false)}
+          onGoExitOffer={() => {
+            setShowExitModal(false);
+            onExitIntent();
+          }}
+        />
+      )}
+
+      {showMobileBar && (
+        <MobileRecoveryBar
+          onMainCta={() => redirectToCheckout(mainOffer, "mobile_bar_main_cta")}
+          onExitOffer={() => onExitIntent()}
+        />
+      )}
     </div>
   );
 }
@@ -510,6 +536,66 @@ function ExitOfferPage({ offer, onBackToMain }) {
             Quero minha Planilha com o cupom OPORTUNIDADE
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   MODAL EXIT INTENT DESKTOP
+========================= */
+
+function ExitIntentModal({ onClose, onGoExitOffer }) {
+  return (
+    <div style={modalStyles.overlay}>
+      <div style={modalStyles.card}>
+        <button style={modalStyles.closeBtn} onClick={onClose} aria-label="Fechar">
+          ×
+        </button>
+
+        <div style={modalStyles.badge}>⚠️ ESPERE UM SEGUNDO</div>
+        <div style={modalStyles.title}>
+          Antes de sair, veja sua <span style={modalStyles.strong}>última oportunidade</span>
+        </div>
+        <div style={modalStyles.text}>
+          Você já chegou até a oferta final. Eu liberei uma condição especial de saída
+          para você não perder a chance de organizar sua vida financeira pagando menos.
+        </div>
+
+        <div style={modalStyles.ctaRow}>
+          <button style={modalStyles.primaryBtn} onClick={onGoExitOffer}>
+            Ver oferta de saída
+          </button>
+          <button style={modalStyles.secondaryBtn} onClick={onClose}>
+            Continuar nesta página
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   BARRA FIXA DE RECUPERAÇÃO MOBILE
+========================= */
+
+function MobileRecoveryBar({ onMainCta, onExitOffer }) {
+  return (
+    <div style={mobileBarStyles.wrap}>
+      <div style={mobileBarStyles.textWrap}>
+        <div style={mobileBarStyles.title}>Oferta ainda disponível</div>
+        <div style={mobileBarStyles.sub}>
+          Continue agora ou veja a condição especial de saída.
+        </div>
+      </div>
+
+      <div style={mobileBarStyles.actions}>
+        <button style={mobileBarStyles.mainBtn} onClick={onMainCta}>
+          Comprar
+        </button>
+        <button style={mobileBarStyles.exitBtn} onClick={onExitOffer}>
+          Ver saída
+        </button>
       </div>
     </div>
   );
@@ -637,10 +723,10 @@ function TestimonialsCarousel({ images }) {
 }
 
 /* =========================
-   DETECTAR SAÍDA / VOLTAR
+   RECUPERAÇÃO DE SAÍDA
 ========================= */
 
-function useExitRedirect(onExitIntent, trackEventName = "exit_intent") {
+function useBackRedirect(onExitIntent, trackEventName = "exit_intent_back") {
   const hasTriggeredRef = useRef(false);
 
   useEffect(() => {
@@ -654,20 +740,60 @@ function useExitRedirect(onExitIntent, trackEventName = "exit_intent") {
       onExitIntent();
     }
 
-    function handleBeforeUnload(e) {
-      e.preventDefault();
-      e.returnValue = "";
-      return "";
-    }
-
     window.addEventListener("popstate", handlePopState);
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [onExitIntent, trackEventName]);
+}
+
+function useDesktopExitIntent(onIntent, trackEventName = "exit_intent_desktop") {
+  const triggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (isMobileDevice()) return;
+
+    function handleMouseOut(e) {
+      if (triggeredRef.current) return;
+      if (!e.relatedTarget && e.clientY <= 10) {
+        triggeredRef.current = true;
+        utmifyTrack(trackEventName);
+        onIntent();
+      }
+    }
+
+    document.addEventListener("mouseout", handleMouseOut);
+
+    return () => {
+      document.removeEventListener("mouseout", handleMouseOut);
+    };
+  }, [onIntent, trackEventName]);
+}
+
+function useMobileRecoveryBar(onShow, trackEventName = "mobile_recovery_bar") {
+  const shownRef = useRef(false);
+
+  useEffect(() => {
+    if (!isMobileDevice()) return;
+
+    function handleScroll() {
+      if (shownRef.current) return;
+      const scrollY = window.scrollY || window.pageYOffset;
+      if (scrollY > 450) {
+        shownRef.current = true;
+        utmifyTrack(trackEventName);
+        onShow();
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [onShow, trackEventName]);
 }
 
 /* =========================
@@ -1275,5 +1401,147 @@ const exitStyles = {
     color: "#334155",
     lineHeight: 1.6,
     textAlign: "center",
+  },
+};
+
+const modalStyles = {
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(15, 23, 42, 0.72)",
+    zIndex: 9999,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+  },
+  card: {
+    width: "100%",
+    maxWidth: 560,
+    background: "#ffffff",
+    borderRadius: 22,
+    padding: 22,
+    position: "relative",
+    boxShadow: "0 25px 60px rgba(0,0,0,0.28)",
+    textAlign: "center",
+  },
+  closeBtn: {
+    position: "absolute",
+    top: 10,
+    right: 12,
+    border: "none",
+    background: "transparent",
+    fontSize: 30,
+    lineHeight: 1,
+    cursor: "pointer",
+    color: "#475569",
+  },
+  badge: {
+    display: "inline-block",
+    background: "#111827",
+    color: "#ffffff",
+    borderRadius: 999,
+    padding: "7px 12px",
+    fontSize: 12,
+    fontWeight: 900,
+  },
+  title: {
+    marginTop: 14,
+    fontSize: 28,
+    lineHeight: 1.18,
+    fontWeight: 900,
+    color: "#0f172a",
+  },
+  strong: {
+    color: "#dc2626",
+  },
+  text: {
+    marginTop: 12,
+    fontSize: 15,
+    lineHeight: 1.6,
+    color: "#334155",
+  },
+  ctaRow: {
+    marginTop: 18,
+    display: "grid",
+    gap: 10,
+  },
+  primaryBtn: {
+    width: "100%",
+    padding: 16,
+    borderRadius: 14,
+    border: "none",
+    background: "#16a34a",
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  secondaryBtn: {
+    width: "100%",
+    padding: 14,
+    borderRadius: 14,
+    border: "1px solid #cbd5e1",
+    background: "#ffffff",
+    color: "#0f172a",
+    fontSize: 15,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
+};
+
+const mobileBarStyles = {
+  wrap: {
+    position: "fixed",
+    left: 10,
+    right: 10,
+    bottom: 10,
+    zIndex: 9998,
+    background: "#ffffff",
+    borderRadius: 18,
+    boxShadow: "0 18px 40px rgba(0,0,0,0.25)",
+    padding: 12,
+    display: "grid",
+    gap: 10,
+    border: "1px solid #e5e7eb",
+  },
+  textWrap: {
+    textAlign: "left",
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: 900,
+    color: "#0f172a",
+  },
+  sub: {
+    marginTop: 4,
+    fontSize: 12,
+    lineHeight: 1.4,
+    color: "#475569",
+  },
+  actions: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 8,
+  },
+  mainBtn: {
+    border: "none",
+    borderRadius: 12,
+    padding: 13,
+    background: "#16a34a",
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  exitBtn: {
+    border: "1px solid #cbd5e1",
+    borderRadius: 12,
+    padding: 13,
+    background: "#ffffff",
+    color: "#0f172a",
+    fontSize: 14,
+    fontWeight: 900,
+    cursor: "pointer",
   },
 };
